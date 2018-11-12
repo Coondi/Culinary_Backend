@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Interfaces\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Culinary.Data\Culinary.Data.csproj" />
+    <ProjectReference Include="..\Culinary.Repository\Culinary.Repository.csproj" />
+  </ItemGroup>
+
+</Project>
