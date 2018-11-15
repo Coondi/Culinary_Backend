@@ -27,11 +27,8 @@ namespace Culinary.Repository
                 .HasMany(x => x.Components);
 
             builder.Entity<Recipe>()
-                .HasOne(x => x.RecipeRatings);
-                
-
-           
+                .HasMany(x => x.RecipeRatings);
+                           
         }
-
     }
 }

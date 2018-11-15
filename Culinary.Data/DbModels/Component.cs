@@ -10,7 +10,5 @@ namespace Culinary.Data.DbModels
         public int Quantity { get; set; }
 
         public virtual Recipe Recipe { get; set; }
-        public int RecipeId { get; set; }
-
     }
 }

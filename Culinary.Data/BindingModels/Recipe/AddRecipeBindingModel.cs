@@ -11,7 +11,5 @@ namespace Culinary.Data.BindingModels.Recipe
         public int PreparationTime { get; set; }
         public string Description { get; set; }
         public ICollection<Component> Components { get; set; }
-
-        /// bez raitingu bo jak dodaje to nie oceniam, inni oceniaja
     }
 }
