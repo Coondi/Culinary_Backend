@@ -14,9 +14,7 @@ namespace Culinary.Repository
 
         }
 
-
-        //ADD IDENTITY AND USER TABLE
-
+        public DbSet<User> Users { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<Component> Components { get; set; }
         public DbSet<RecipeRating> RecipeRatings { get; set; }
