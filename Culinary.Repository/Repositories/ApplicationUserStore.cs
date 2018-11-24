@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Culinary.Repository;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,8 +8,15 @@ using System.Threading.Tasks;
 
 namespace Culinary.Data.DbModels
 {
-    public class UserStore : IUserStore<User>
+    public class ApplicationUserStore : IUserStore<User>, IUserPasswordStore<User>
     {
+        private readonly ApplicationDbContext _dbContext;
+
+        public ApplicationUserStore(ApplicationDbContext dbContext)
+        {
+            _dbContext = dbContext;
+        }
+     
         public Task<IdentityResult> CreateAsync(User user, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
@@ -39,6 +47,11 @@ namespace Culinary.Data.DbModels
             return Task.FromResult(user.FirstName);
         }
 
+        public Task<string> GetPasswordHashAsync(User user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.PasswordHash);
+        }
+
         public Task<string> GetUserIdAsync(User user, CancellationToken cancellationToken)
         {
             return Task.FromResult(user.Id);
@@ -46,12 +59,23 @@ namespace Culinary.Data.DbModels
 
         public Task<string> GetUserNameAsync(User user, CancellationToken cancellationToken)
         {
-            return Task.FromResult(user.Nick);
+            return Task.FromResult(user.UserName);
+        }
+
+        public Task<bool> HasPasswordAsync(User user, CancellationToken cancellationToken)
+        {
+            return Task.FromResult(user.PasswordHash != null);
         }
 
         public Task SetNormalizedUserNameAsync(User user, string normalizedName, CancellationToken cancellationToken)
         {
             user.FirstName = normalizedName;
+            return Task.CompletedTask;
+        }
+
+        public Task SetPasswordHashAsync(User user, string passwordHash, CancellationToken cancellationToken)
+        {
+            user.PasswordHash = passwordHash;
             return Task.CompletedTask;
         }
 

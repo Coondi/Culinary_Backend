@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Culinary.Data.DbModels;
 using Culinary.Repository;
+using Culinary.Repository.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -37,8 +38,10 @@ namespace Culinary.WebApi
             services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default"), b => b.MigrationsAssembly("Culinary.Repository")));
 
 
-            services.AddIdentityCore<string>(options => { });
-         //   services.AddScoped<IUserStore<User>, UserOnlyStore<User, ApplicationDbContext>>();
+            services.AddIdentityCore<User>(options => { });
+            services.AddScoped<IUserStore<User>, UserOnlyStore<User, ApplicationDbContext>>();
+            services.AddAuthentication("cookies")
+                .AddCookie("cookies", options => options.LoginPath = "/Account/Login");
 
             services.AddSwaggerGen(c =>
             {
@@ -55,8 +58,8 @@ namespace Culinary.WebApi
                 .AllowAnyHeader()
                 .AllowCredentials());
 
+            app.UseAuthentication();
             app.UseMvc();
-
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
