@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 using AutoMapper;
 using Culinary.Data.DbModels;
 using Culinary.Repository;
+using Culinary.Repository.Interfaces;
 using Culinary.Repository.Repositories;
+using Culinary.Services.Interfaces;
+using Culinary.Services.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -33,15 +36,22 @@ namespace Culinary.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default"), b => b.MigrationsAssembly("Culinary.Repository")));
             services.AddMvc();
             services.AddAutoMapper();
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default"), b => b.MigrationsAssembly("Culinary.Repository")));
+
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddTransient<IAccountService, AccountService>();
+
+
+
+
 
 
             services.AddIdentityCore<User>(options => { });
             services.AddScoped<IUserStore<User>, UserOnlyStore<User, ApplicationDbContext>>();
-            services.AddAuthentication("cookies")
-                .AddCookie("cookies", options => options.LoginPath = "/Account/Login");
+            services.AddAuthentication("Identity.Application")
+                .AddCookie("Identity.Application", options => options.LoginPath = "/Account/Login");
 
             services.AddSwaggerGen(c =>
             {

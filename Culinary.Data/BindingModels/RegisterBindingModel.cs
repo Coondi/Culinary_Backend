@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 
@@ -13,12 +14,11 @@ namespace Culinary.Data.BindingModels
         public string Email { get; set; }
 
         [Required]
-        [DataType(DataType.Password)]
+        [PasswordPropertyText]
         [StringLength(30, ErrorMessage = "Hasło powinno zawierać od 7 do 40 znaków", MinimumLength = 7)]
         public string Password { get; set; }
 
         [Compare("Password")]
-        [DataType(DataType.Password)]
         public string ConfirmPassword { get; set; }
 
         [Required]

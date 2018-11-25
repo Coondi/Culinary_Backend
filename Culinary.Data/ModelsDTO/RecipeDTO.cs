@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Culinary.Data.ModelsDTO
 {
-    public class RecipeDTO : BaseModel
+    public class RecipeDTO : BaseModelDTO
     {
         public string RecipeName { get; set; }
         public int PreparationTime { get; set; }

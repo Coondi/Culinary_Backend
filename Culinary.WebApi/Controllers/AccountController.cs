@@ -2,6 +2,7 @@
 using Culinary.Data.DbModels;
 using Culinary.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -24,13 +25,32 @@ namespace Culinary.WebApi.Controllers
 
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterBindingModel model)
-        {
+        {          
+
             if(!ModelState.IsValid)
             {
                 return BadRequest(ModelStateErrors());
             }
 
             var result = await _accountService.Register(model);
+            
+            if(result.ErrorOccured)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginBindingModel model)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelStateErrors());
+            }
+
+            var result = await _accountService.Login(model);
 
             if(result.ErrorOccured)
             {

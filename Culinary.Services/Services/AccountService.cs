@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Identity;
 using Culinary.Data.DbModels;
 using AutoMapper;
 using System.Linq;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Culinary.Services.Services
 {
@@ -38,14 +40,32 @@ namespace Culinary.Services.Services
             throw new NotImplementedException();
         }
 
-        public Task<ResponseDTO<LoginDTO>> Login(LoginBindingModel model)
+        public async Task<ResponseDTO<LoginDTO>> Login(LoginBindingModel model)
         {
-            throw new NotImplementedException();
+            var response = new ResponseDTO<LoginDTO>();
+            var user = await _userManager.FindByNameAsync(model.Login);
+            if (user == null)
+            {
+                user = await _userManager.FindByEmailAsync(model.Login);
+            }
+
+            var checkPassword = await _userManager.CheckPasswordAsync(user, model.Password);
+            if(user != null && checkPassword)
+            {
+                var identity = new ClaimsIdentity("Identity.Application");
+                identity.AddClaim(new Claim(ClaimTypes.Name, user.Id));
+                identity.AddClaim(new Claim(ClaimTypes.Email, user.Email));
+
+                await _httpContext.HttpContext.SignInAsync("Identity.Application", new ClaimsPrincipal(identity), new AuthenticationProperties { IsPersistent = true });
+                return response;
+            }
+            response.Errors.Add("Nieprawidłowy login lub hasło");
+            return response;
         }
 
-        public Task LogOut()
+        public async Task LogOut()
         {
-            throw new NotImplementedException();
+            await _httpContext.HttpContext.SignOutAsync("Identity.Application");
         }
 
         public async Task<ResponseDTO<BaseModelDTO>> Register(RegisterBindingModel model)
