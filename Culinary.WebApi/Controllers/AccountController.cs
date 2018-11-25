@@ -1,5 +1,6 @@
 ﻿using Culinary.Data.BindingModels;
 using Culinary.Data.DbModels;
+using Culinary.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -12,38 +13,31 @@ using System.Threading.Tasks;
 namespace Culinary.WebApi.Controllers
 {
     [Route("Account")]
-    public class AccountController : Controller
+    public class AccountController : BaseResponseController
     {
-        private readonly UserManager<User> _userManager;
+        private readonly IAccountService _accountService;
 
-        public AccountController(UserManager<User> userManager)
+        public AccountController(IAccountService accountService)
         {
-            _userManager = userManager;
+            _accountService = accountService;
         }
 
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterBindingModel model)
         {
-            if(ModelState.IsValid)
+            if(!ModelState.IsValid)
             {
-                var user = await _userManager.FindByNameAsync(model.UserName);
-
-                if(user == null)
-                {
-                    user = new User
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        UserName = model.UserName
-
-                    };
-
-                    var result = await _userManager.CreateAsync(user, model.Password);
-                }
-
-                return Ok(user);
+                return BadRequest(ModelStateErrors());
             }
 
-            return BadRequest();
+            var result = await _accountService.Register(model);
+
+            if(result.ErrorOccured)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
         }
 
         
