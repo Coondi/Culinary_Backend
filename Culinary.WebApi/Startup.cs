@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace Culinary.WebApi
@@ -36,22 +37,20 @@ namespace Culinary.WebApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default"), b => b.MigrationsAssembly("Culinary.Repository")));
-            services.AddMvc();
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default"), b => b.MigrationsAssembly("Culinary.Repository")));          
             services.AddAutoMapper();
 
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient<IAccountService, AccountService>();
-
-
-
-
 
 
             services.AddIdentityCore<User>(options => { });
             services.AddScoped<IUserStore<User>, UserOnlyStore<User, ApplicationDbContext>>();
             services.AddAuthentication("Identity.Application")
-                .AddCookie("Identity.Application", options => options.LoginPath = "/Account/Login");
+                .AddCookie("Identity.Application");
+
+            services.AddMvc();
 
             services.AddSwaggerGen(c =>
             {

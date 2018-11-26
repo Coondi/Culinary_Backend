@@ -28,11 +28,27 @@ namespace Culinary.Services.Services
             _mapper = mapper;
         }
 
-
-
-        public Task<ResponseDTO<BaseModelDTO>> ChangePassword(string userId, ChangePasswordBindingModel model)
+        public async Task<ResponseDTO<BaseModelDTO>> ChangePassword(string userId, ChangePasswordBindingModel model)
         {
-            throw new NotImplementedException();
+            var response = new ResponseDTO<BaseModelDTO>();
+            var user = await _userManager.FindByNameAsync(userId);
+
+            if(user == null)
+            {
+                response.Errors.Add("Nie znaleziono takiego użytkownika.");
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user, model.Password, model.NewPassword);
+            if(result.Errors.Any())
+            {
+                foreach (var error in result.Errors)
+                {
+                    response.Errors.Add(error.Description);
+                }
+                return response;
+            }
+
+            return response;
         }
 
         public Task<ResponseDTO<BaseModelDTO>> GetUserByCookie(string userId)

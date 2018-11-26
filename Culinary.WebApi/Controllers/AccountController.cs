@@ -31,7 +31,6 @@ namespace Culinary.WebApi.Controllers
             {
                 return BadRequest(ModelStateErrors());
             }
-
             var result = await _accountService.Register(model);
             
             if(result.ErrorOccured)
@@ -49,8 +48,32 @@ namespace Culinary.WebApi.Controllers
             {
                 return BadRequest(ModelStateErrors());
             }
-
             var result = await _accountService.Login(model);
+
+            if(result.ErrorOccured)
+            {
+                return BadRequest(result);
+            }
+
+            return Ok(result);
+        }
+
+        [HttpPost("LogOut")]
+        public async Task LogOut()
+        {
+            await _accountService.LogOut();
+        }
+
+        [HttpPost("ChangePassword")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordBindingModel model)
+        {
+            if(!ModelState.IsValid)
+            {
+                return BadRequest(ModelStateErrors());
+            }
+
+            var userId = User.Identity.Name;
+            var result = await _accountService.ChangePassword(userId, model);
 
             if(result.ErrorOccured)
             {
