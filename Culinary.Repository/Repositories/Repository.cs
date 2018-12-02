@@ -28,6 +28,12 @@ namespace Culinary.Repository.Repositories
             return t;
         }
 
+        public async Task<bool> AddAsyncBool(T entity)
+        {
+            await _dbSet.AddAsync(entity);
+            return await SaveAsyncBool();
+        }
+
         public virtual void Delete(T entity)
         {
             _dbSet.Remove(entity);
@@ -38,6 +44,17 @@ namespace Culinary.Repository.Repositories
         {
             _dbSet.Remove(entity);
             return await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<bool> ExistAsync(Expression<Func<T, bool>> getBy, params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = _dbSet;
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query.AnyAsync(getBy);
         }
 
         public virtual T Find(Expression<Func<T, bool>> match)
@@ -91,9 +108,25 @@ namespace Culinary.Repository.Repositories
             return _dbSet;
         }
 
+        public IQueryable<T> GetAll(params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = _dbSet;
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return query;
+        }
+
         public virtual async Task<ICollection<T>> GetAllAsync()
         {
             return await _dbSet.ToListAsync();
+        }
+
+        public IQueryable<T> GetAllBy(Expression<Func<T, bool>> getBy, params Expression<Func<T, object>>[] includes)
+        {
+            return GetAll(includes).Where(getBy);
         }
 
         public IQueryable<T> GetAllIncluding(params Expression<Func<T, object>>[] includeProperties)
@@ -110,6 +143,17 @@ namespace Culinary.Repository.Repositories
         public virtual async Task<T> GetAsync(int id)
         {
             return await _dbSet.FindAsync(id);
+        }
+
+        public async Task<T> GetByAsync(Expression<Func<T, bool>> getBy, params Expression<Func<T, object>>[] includes)
+        {
+            IQueryable<T> query = _dbSet;
+            foreach (var include in includes)
+            {
+                query = query.Include(include);
+            }
+
+            return await query.FirstOrDefaultAsync(getBy);
         }
 
         public void Insert(T entity)
@@ -133,6 +177,12 @@ namespace Culinary.Repository.Repositories
             _dbSet.Remove(entity);
         }
 
+        public async Task<bool> RemoveBool(T entity)
+        {
+            _dbSet.Remove(entity);
+            return await SaveAsyncBool();
+        }
+
         public void Save()
         {
             _dbContext.SaveChanges();
@@ -141,6 +191,11 @@ namespace Culinary.Repository.Repositories
         public virtual async Task<int> SaveAsync()
         {
             return await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<bool> SaveAsyncBool()
+        {
+            return (await _dbContext.SaveChangesAsync() >= 0);
         }
 
         public void Update(T entity)
@@ -184,5 +239,6 @@ namespace Culinary.Repository.Repositories
 
             return exist;
         }
+
     }
 }

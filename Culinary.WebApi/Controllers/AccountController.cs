@@ -1,14 +1,6 @@
 ﻿using Culinary.Data.BindingModels;
-using Culinary.Data.DbModels;
 using Culinary.Services.Interfaces;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Culinary.WebApi.Controllers

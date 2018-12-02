@@ -43,6 +43,9 @@ namespace Culinary.WebApi
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             services.AddTransient<IAccountService, AccountService>();
+            services.AddTransient<IRecipeService, RecipeService>();
+
+
 
 
             services.AddIdentityCore<User>(options => { });
@@ -76,6 +79,7 @@ namespace Culinary.WebApi
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Culinary API V1");
             });
 
+            app.UseStaticFiles();
 
 
         }

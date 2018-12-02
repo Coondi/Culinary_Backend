@@ -14,5 +14,6 @@ namespace Culinary.Data.ModelsDTO
         {
             Errors = new List<string>();
         }
+
     }
 }
