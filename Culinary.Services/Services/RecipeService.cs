@@ -58,7 +58,7 @@ namespace Culinary.Services.Services
 
         }
 
-        public async Task<ResponseDTO<BaseModelDTO>> DeleteRecipe(int recipeId) // DONE AND GO TO TEST
+        public async Task<ResponseDTO<BaseModelDTO>> DeleteRecipe(int recipeId) 
         {
             var response = new ResponseDTO<BaseModelDTO>();
 
@@ -105,7 +105,7 @@ namespace Culinary.Services.Services
                 response.Errors.Add("Nie znaleziono takiego przepisu.");
             }
 
-            var recipe = await _recipeRepository.GetAsync(recipeId);
+            var recipe = await _recipeRepository.GetByAsync(x => x.Id == recipeId);
             var result = _mapper.Map<Recipe, RecipeDTO>(recipe);
 
             response.Object = result;

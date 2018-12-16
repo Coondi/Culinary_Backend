@@ -16,7 +16,7 @@ namespace Culinary.WebApi.Controllers
         }
 
         [HttpPost("Add")]
-        public async Task<IActionResult> AddRecipe([FromBody] AddRecipeBindingModel model)
+        public async Task<IActionResult> AddRecipe([FromForm] AddRecipeBindingModel model)
         {
             if(!ModelState.IsValid)
             {
@@ -34,23 +34,23 @@ namespace Culinary.WebApi.Controllers
         
         }
 
-        //[HttpPut("Update/{recipeId}")]
-        //public async Task<IActionResult> UpdateRecipe(int recipeId, [FromBody] UpdateRecipeBindingModel model)
-        //{
-        //    if(!ModelState.IsValid)
-        //    {
-        //        return BadRequest(ModelStateErrors());
-        //    }
+        [HttpPut("Update/{recipeId}")]
+        public async Task<IActionResult> UpdateRecipe(int recipeId, [FromBody] UpdateRecipeBindingModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelStateErrors());
+            }
 
-        //    var result = await _recipeService.UpdateRecipe(recipeId, model);
+            var result = await _recipeService.UpdateRecipe(recipeId, model);
 
-        //    if(result.ErrorOccured)
-        //    {
-        //        return BadRequest(result);
-        //    }
+            if (result.ErrorOccured)
+            {
+                return BadRequest(result);
+            }
 
-        //    return Ok(result);
-        //}
+            return Ok(result);
+        }
 
         [HttpDelete("Delete/{recipeId}")]
         public async Task<IActionResult> DeleteRecipe(int recipeId)
