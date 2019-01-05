@@ -1,11 +1,14 @@
 ﻿using Culinary.Data.BindingModels.Recipe;
 using Culinary.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace Culinary.WebApi.Controllers
 {
     [Route("Recipe")]
+    [Authorize]
     public class RecipeController : BaseResponseController
     {
         private readonly IRecipeService _recipeService;
@@ -17,13 +20,14 @@ namespace Culinary.WebApi.Controllers
 
         [HttpPost("Add")]
         public async Task<IActionResult> AddRecipe([FromForm] AddRecipeBindingModel model)
-        {
+        {                 
             if(!ModelState.IsValid)
             {
                 return BadRequest(ModelStateErrors());
             }
 
-            var result = await _recipeService.AddRecipe(model, model.Photo);
+            var userId = User.Identity.Name;
+            var result = await _recipeService.AddRecipe(model, model.photo);
 
             if(result.ErrorOccured)
             {
@@ -35,14 +39,14 @@ namespace Culinary.WebApi.Controllers
         }
 
         [HttpPut("Update/{recipeId}")]
-        public async Task<IActionResult> UpdateRecipe(int recipeId, [FromBody] UpdateRecipeBindingModel model)
+        public async Task<IActionResult> UpdateRecipe(int recipeId, [FromForm] UpdateRecipeBindingModel model)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelStateErrors());
             }
 
-            var result = await _recipeService.UpdateRecipe(recipeId, model);
+            var result = await _recipeService.UpdateRecipe(recipeId, model, model.Photo);
 
             if (result.ErrorOccured)
             {

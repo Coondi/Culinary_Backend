@@ -10,7 +10,7 @@ namespace Culinary.Data.BindingModels.Recipe
         public string RecipeName { get; set; }
         public int PreparationTime { get; set; }
         public string Description { get; set; }
-        public IFormFile Photo { get; set; }
+        public IFormFile photo { get; set; }
         public ICollection<ComponentBindingModel> Components { get; set; }
     }
 }

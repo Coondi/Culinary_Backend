@@ -1,5 +1,6 @@
 ﻿using Culinary.Data.BindingModels;
 using Culinary.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 

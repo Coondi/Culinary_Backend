@@ -11,7 +11,7 @@ namespace Culinary.Services.Interfaces
     public interface IRecipeService
     {
         Task<ResponseDTO<BaseModelDTO>> AddRecipe(AddRecipeBindingModel recipeBindingModel, IFormFile photo);
-        Task<ResponseDTO<BaseModelDTO>> UpdateRecipe(int recipeId, UpdateRecipeBindingModel recipeBindingModel);
+        Task<ResponseDTO<BaseModelDTO>> UpdateRecipe(int recipeId, UpdateRecipeBindingModel recipeBindingModel, IFormFile photo);
         Task<ResponseDTO<BaseModelDTO>> DeleteRecipe(int recipeId);
         Task<ResponsesDTO<RecipeDTO>> GetAllRecipes();
         Task<ResponseDTO<RecipeDTO>> GetRecipe(int recipeId);

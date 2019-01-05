@@ -27,6 +27,7 @@ namespace Culinary.Services.Services
         {
             var response = new ResponseDTO<BaseModelDTO>();
             var fileName = "";
+            
 
             if(photo != null)
             {
@@ -114,9 +115,10 @@ namespace Culinary.Services.Services
             
         }
 
-        public async Task<ResponseDTO<BaseModelDTO>> UpdateRecipe(int recipeId, UpdateRecipeBindingModel recipeBindingModel)
+        public async Task<ResponseDTO<BaseModelDTO>> UpdateRecipe(int recipeId, UpdateRecipeBindingModel recipeBindingModel, IFormFile photo)
         {
             var response = new ResponseDTO<BaseModelDTO>();
+            var fileName = "";
             var recipeExist = await _recipeRepository.ExistAsync(x => x.Id == recipeId);
 
             if(!recipeExist)
@@ -125,6 +127,26 @@ namespace Culinary.Services.Services
             }
 
             var recipe = await _recipeRepository.GetAsync(recipeId);
+            if (photo == null)
+            {
+                response.Errors.Add("Nie dodałeś zdjęcia.");
+                return response;
+            }
+
+            string uploadFolder = "wwwroot\\RecipePhotos";
+            if (!Directory.Exists(uploadFolder)) Directory.CreateDirectory(uploadFolder);
+
+            fileName = Guid.NewGuid() + Path.GetExtension(photo.FileName);
+            var path = Path.Combine(uploadFolder, fileName);
+
+            using (var stream = new FileStream(path, FileMode.Create))
+            {
+                await photo.CopyToAsync(stream);
+            }
+
+            recipe.PhotoName = fileName;
+            
+            
             var mappedRecipe = _mapper.Map(recipeBindingModel, recipe);
 
             if(await _recipeRepository.UpdateAsync(mappedRecipe, recipeId) == null)
